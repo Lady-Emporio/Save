@@ -49,6 +49,7 @@ void printStatus(Cell table[ROW_TABLE][COL_TABLE]){
         cout<<endl;
     };
 }
+
 void TryIfCellBlock(Cell table[ROW_TABLE][COL_TABLE],int flag=0){
     for(int row=0;row!=ROW_TABLE;++row){
         for(int col=0;col!=COL_TABLE;++col){
@@ -75,6 +76,107 @@ void TryIfCellBlock(Cell table[ROW_TABLE][COL_TABLE],int flag=0){
     };
 }
 
+bool TryStringInTable(Cell table[ROW_TABLE][COL_TABLE],string word,__position__ flag,int xy[3]){
+    for(int row=0;row!=ROW_TABLE;++row){
+        for(int col=0;col!=COL_TABLE;++col){
+            for(int i=0;i!=word.size();++i){
+                if(table[row][col].Status()==wordHere){
+                    if(table[row][col].Value()==word[i]){
+                        xy[0]=row;
+                        xy[1]=col;
+                        xy[2]=i;
+                        return true;
+                    }
+                }  
+            };
+        };
+    };
+    return false;
+}
+
+bool SetStringToTable(Cell table[ROW_TABLE][COL_TABLE],string word,int xy[3],__position__ pos){
+    int sum=0;
+    if(pos==horizontal){
+    for(int i=xy[2]-1,row=xy[0]-1;i>=0;--i,--row){
+        Cell *next=&table[row][xy[1]];
+        if(next->Status()==block && next->Status()==wordHere){
+            ++sum;
+        }
+        if(next->Pos()==pos){
+            sum+=2;
+            break;
+        }
+    };        
+    for(int i=xy[2],row=xy[0];i!=word.size();++i,++row){
+        Cell *next=&table[row][xy[1]];
+        if(next->Status()==block && next->Status()==wordHere){
+            ++sum;
+        }
+        if(next->Pos()==pos){
+            sum+=2;
+            break;
+        }
+    };
+    if(sum<=1){
+    for(int i=xy[2]-1,row=xy[0]-1;i>=0;--i,--row){
+        Cell *next=&table[row][xy[1]];
+        next->setValue(word[i]);
+        next->setPos(pos);
+        next->setStatus(wordHere);
+    };
+    for(int i=xy[2],row=xy[0];i!=word.size();++i,++row){
+        Cell *next=&table[row][xy[1]];
+        next->setValue(word[i]);
+        next->setPos(pos);
+        next->setStatus(wordHere);
+    };
+        return true;
+    }else{
+        return false;
+    }
+    }
+    else if(pos==vertical){
+//     for(int i=xy[2]-1,row=xy[0]-1;i>=0;--i,--row){
+    for(int i=xy[2]-1,col=xy[1]-1;i>=0;--i,--col){
+//         Cell *next=&table[row][xy[1]];
+        Cell *next=&table[xy[0]][col];
+        if(next->Status()==block && next->Status()==wordHere){
+            ++sum;
+        }
+        if(next->Pos()==pos){
+            sum+=2;
+            break;
+        }
+    };        
+    for(int i=xy[2],col=xy[1];i!=word.size();++i,++col){
+        Cell *next=&table[xy[0]][col];
+        if(next->Status()==block && next->Status()==wordHere){
+            ++sum;
+        }
+        if(next->Pos()==pos){
+            sum+=2;
+            break;
+        }
+    };
+    if(sum<=1){
+    for(int i=xy[2]-1,col=xy[1]-1;i>=0;--i,--col){
+        Cell *next=&table[xy[0]][col];
+        next->setValue(word[i]);
+        next->setPos(pos);
+        next->setStatus(wordHere);
+    };
+    for(int i=xy[2],col=xy[1];i!=word.size();++i,++col){
+        Cell *next=&table[xy[0]][col];
+        next->setValue(word[i]);
+        next->setPos(pos);
+        next->setStatus(wordHere);
+    };
+        return true;
+    }else{
+        return false;
+    }
+    }
+}
 int main() {
     Cell table[ROW_TABLE][COL_TABLE];
     string w1="force";
@@ -87,64 +189,63 @@ int main() {
         next->setPos(vertical);
         next->setStatus(wordHere);
     };
-    for(int row=0;row!=ROW_TABLE;++row){
-        for(int col=0;col!=COL_TABLE;++col){
-            for(int i=0;i!=w2.size();++i){
-                if(table[row][col].Status()==wordHere){
-                    if(table[row][col].Value()==w2[i]){
-                        xy[0]=row;
-                        xy[1]=col;
-                        xy[2]=i;
-                        goto MyBreak;
-                    }
-                }  
-            };
-        };
-    };
-    MyBreak:
-//     cout<<xy[0]<<" "<<xy[1]<<" "<<xy[2]<<endl;
-    for(int i=xy[2]-1,row=xy[0]-1;i>=0;--i,--row){
-        Cell *next=&table[row][xy[1]];
-        next->setValue(w2[i]);
-        next->setPos(horizontal);
-        next->setStatus(wordHere);
-    };
-    for(int i=xy[2],row=xy[0];i!=w2.size();++i,++row){
-        Cell *next=&table[row][xy[1]];
-        next->setValue(w2[i]);
-        next->setPos(horizontal);
-        next->setStatus(wordHere);
-    };
-    xy[0]=-1,xy[1]=-1,xy[2]=-1;
-     for(int row=0;row!=ROW_TABLE;++row){
-        for(int col=0;col!=COL_TABLE;++col){
-            for(int i=0;i!=w3.size();++i){
-                if(table[row][col].Status()==wordHere){
-                    if(table[row][col].Value()==w3[i]){
-                        xy[0]=row;
-                        xy[1]=col;
-                        xy[2]=i;
-                        goto MyBreak2;
-                    }
-                }  
-            };
-        };
-    };
-    MyBreak2:
-    for(int i=xy[2]-1,row=xy[0]-1;i>=0;--i,--row){
-        Cell *next=&table[row][xy[1]];
-        next->setValue(w3[i]);
-        next->setPos(horizontal);
-        next->setStatus(wordHere);
-    };
-    for(int i=xy[2],row=xy[0];i!=w3.size();++i,++row){
-        Cell *next=&table[row][xy[1]];
-        next->setValue(w3[i]);
-        next->setPos(horizontal);
-        next->setStatus(wordHere);
-    };
-    TryIfCellBlock(table,1);
+    
+    if(TryStringInTable(table,w2,vertical,xy)){
+        if(SetStringToTable(table,w2,xy,horizontal)){
+            TryIfCellBlock(table,1);
+        }
+    }
+    if(TryStringInTable(table,w3,vertical,xy)){
+        if(SetStringToTable(table,w3,xy,horizontal)){
+            TryIfCellBlock(table,1);
+        }
+    }
+    string w4="fear";
+    if(TryStringInTable(table,w4,vertical,xy)){
+        if(SetStringToTable(table,w4,xy,horizontal)){
+            TryIfCellBlock(table,1);
+        }
+        else{
+            cout<<w4+" is not in"<<endl;
+        }
+    }
+    w4="leo";
+    if(TryStringInTable(table,w4,horizontal,xy)){
+        if(SetStringToTable(table,w4,xy,vertical)){
+            TryIfCellBlock(table,1);
+        }
+        else{
+            cout<<w4+" is not in"<<endl;
+        }
+    }
+    w4="en";
+    if(TryStringInTable(table,w4,horizontal,xy)){
+        if(SetStringToTable(table,w4,xy,vertical)){
+            TryIfCellBlock(table,1);
+        }
+        else{
+            cout<<w4+" is not in"<<endl;
+        }
+    }
+//     TryStringInTable(table,,vertical,xy);
+//     SetStringToTable(table,"fear",xy);
+//     TryIfCellBlock(table,1);
 //     printStatus(table);
     printValue(table);
     return 0;
 }
+/*
+Running first/f.cpp...
+fear is not in
+en is not in
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 p # 0 0 0
+0 0 0 0 0 l e o 0 0
+0 0 # h # a # 0 0 0
+0 0 f o r c e 0 0 0
+0 0 # p # e # 0 0 0
+0 0 0 e 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+*/
